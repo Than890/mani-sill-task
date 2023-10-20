@@ -1,6 +1,6 @@
 ## Using Technology
 
-.
+Nestjs, Prisma ORM, Postgresql
 
 ## Running the app
 
