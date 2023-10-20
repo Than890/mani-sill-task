@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum Role {
+    admin
+    user
+}
+
+model Organization {
+    id            String @id @unique @default(uuid()) @map("id") @db.VarChar(36)
+    name          String @db.VarChar(50)
+    organizations User[]
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+
+    @@map("organization")
+}
+
+model User {
+    id       String @id @unique @default(uuid()) @map("id") @db.VarChar(36)
+    fullname String @db.VarChar(50)
+    username String @unique @db.VarChar(16)
+    password String @db.VarChar(255)
+    phone    String @unique @db.VarChar(13)
+    address  String @db.VarChar(255)
+
+    refresh_token String? @db.Text()
+
+    role            Role         @default(user)
+    posts           Post[]
+    organization_id String       @db.VarChar(36)
+    organization    Organization @relation(fields: [organization_id], references: [id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+
+    @@map("user")
+}
+
+model Post {
+    id   String @id @unique @default(uuid()) @map("id") @db.VarChar(36)
+    post String @db.Text()
+
+    user_id String @db.VarChar(36)
+    user    User   @relation(fields: [user_id], references: [id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+
+    @@map("post")
+}
